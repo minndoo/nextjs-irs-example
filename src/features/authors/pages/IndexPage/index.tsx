@@ -26,8 +26,6 @@ export const getStaticProps: GetStaticProps = async () => {
     "author"
   );
 
-  console.log(allAuthors);
-
   return {
     props: {
       authors: allAuthors.items,
