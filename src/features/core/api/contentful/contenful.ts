@@ -1,5 +1,6 @@
 import { ContenfulClientProps } from './types';
 
+// ??? TODO: replace fetch with ky (fetch based)
 interface IContentfulClient {
   accessToken: string | undefined;
   space: string | undefined;
@@ -23,7 +24,7 @@ class ContentfulClient implements IContentfulClient {
     this.baseUrl = 'https://cdn.contentful.com';
   }
 
-  private createEndpointUrl (endpoint: string, searchQueries?: {[key:string]: string}): string {
+  private createEndpointUrl (endpoint: string, searchQueries?: {[key:string]: any}): string {
     //create base
     const urlObj = new URL(`${this.baseUrl}/spaces/${this.space}/environments/${this.environment}${endpoint}`);
     urlObj.searchParams.set('access_token', this.accessToken || '');
@@ -32,20 +33,20 @@ class ContentfulClient implements IContentfulClient {
     return urlObj.toString();
   }
   
-  getEntries<T>(typeId: string): Promise<T> {
-    const entriesUrl = this.createEndpointUrl('/entries', {'content_type': typeId});
+  getEntries<T>(typeId: string, options?: {[key:string]: any}): Promise<T> {
+    const entriesUrl = this.createEndpointUrl('/entries', {...options, 'content_type': typeId, include: 0});
 
     return fetch(entriesUrl).then(data => {
       return data.json() as Promise<T>;
-    });
+    }).catch(error => error);
   };
 
-  getEntry<T>(entryId: string): Promise<T> {
-    const entryUrl = this.createEndpointUrl(`/entries/${entryId}`);
+  getEntry<T>(entryId: string, options?: {[key:string]: any}): Promise<T> {
+    const entryUrl = this.createEndpointUrl(`/entries/${entryId}`, options);
 
     return fetch(entryUrl).then(data => {
       return data.json() as Promise<T>
-    })
+    }).catch(error => error);
   }
 
 }

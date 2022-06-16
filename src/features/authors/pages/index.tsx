@@ -2,7 +2,7 @@ import { GetStaticProps, NextPage } from "next";
 
 import { contentfulClient } from "~/features/core/api/contentful";
 import { ContentEntries } from "~/features/core/types";
-import { Author } from "../../types";
+import { Author } from "../types";
 
 export const AuthorsPage: NextPage<{
   authors: Author[];
@@ -10,7 +10,6 @@ export const AuthorsPage: NextPage<{
   return (
     <>
       <h1>Authors</h1>
-      {JSON.stringify(authors)}
       <ul>
         {authors.map((author) => {
           const { twitterHandle } = author.fields;
