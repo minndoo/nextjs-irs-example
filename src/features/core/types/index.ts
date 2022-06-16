@@ -1,5 +1,27 @@
+export type Asset = {
+  sys: {
+    id: string
+  }
+  fields: {
+    title: string
+    file: {
+      title: string
+      url: string
+      details: {
+        image: {
+          width: number
+          height: number
+        }
+      }
+    }
+  }
+}
+
 export type ContentEntries<T> = {
   items: T[]
+  includes: {
+    Asset: Asset[]
+  }
 }
 
 export type ObjectReference = {

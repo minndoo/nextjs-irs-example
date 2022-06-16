@@ -13,14 +13,11 @@ export const GalleriesPage: NextPage<{ galleries: Gallery[] }> = ({
       <ul>
         {galleries?.length &&
           galleries.map((gallery) => {
-            const { fields, sys } = gallery;
+            const { fields } = gallery;
             return (
-              <Link
-                href={`/galleries/${sys.id}`}
-                key={fields.slug || fields.title}
-              >
-                {fields.title}
-              </Link>
+              <li key={fields.slug}>
+                <Link href={`/galleries/${fields.slug}`}>{fields.title}</Link>
+              </li>
             );
           })}
       </ul>

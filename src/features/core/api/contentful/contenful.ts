@@ -1,6 +1,6 @@
 import { ContenfulClientProps } from './types';
 
-// ??? TODO: replace fetch with ky (fetch based)
+// !!! TODO: use graphql instead -> this is madness
 interface IContentfulClient {
   accessToken: string | undefined;
   space: string | undefined;
@@ -33,8 +33,8 @@ class ContentfulClient implements IContentfulClient {
     return urlObj.toString();
   }
   
-  getEntries<T>(typeId: string, options?: {[key:string]: any}): Promise<T> {
-    const entriesUrl = this.createEndpointUrl('/entries', {...options, 'content_type': typeId, include: 0});
+  getEntries<T>(typeId: string, options?: Omit<{[key:string]: any}, 'content_type'>): Promise<T> {
+    const entriesUrl = this.createEndpointUrl('/entries', {'content_type': typeId, ...options});
 
     return fetch(entriesUrl).then(data => {
       return data.json() as Promise<T>;
