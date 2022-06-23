@@ -1,4 +1,3 @@
-import { ApolloQueryResult, QueryResult, useQuery } from "@apollo/client";
 import { GetStaticProps, NextPage } from "next";
 import { initializeApollo } from "~/features/core/api/graphql";
 import {
