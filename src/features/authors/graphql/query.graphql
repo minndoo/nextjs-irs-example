@@ -1,0 +1,10 @@
+query GetAllAuthors {
+  authorCollection {
+    items {
+      twitterHandle
+      sys {
+        id
+      }
+    }
+  }
+}

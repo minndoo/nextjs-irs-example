@@ -1,0 +1,33 @@
+query GetAllPhotoGalleries($limit: Int) {
+  photoGalleryCollection(limit: $limit) {
+    items {
+      sys {
+        id
+      }
+      slug
+      title
+    }
+  }
+}
+
+query GetAllPhotosFromGallery($where: PhotoGalleryFilter) {
+  photoGalleryCollection(where: $where, limit: 1) {
+    title
+    items {
+      imagesCollection {
+        items {
+          sys {
+            id
+          }
+          photo {
+            title
+            url
+            description
+            height
+            width
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,10 +1,14 @@
 import { NextPage, GetStaticProps } from "next";
 import Link from "next/link";
-import { contentfulClient } from "~/features/core/api/contentful";
-import { ContentEntries } from "~/features/core/types";
-import { Gallery } from "../types";
+import { initializeApollo } from "~/features/core/api/graphql";
+import {
+  GetAllPhotoGalleriesDocument,
+  GetAllPhotoGalleriesQuery,
+  GetAllPhotoGalleriesQueryVariables,
+  PhotoGallery,
+} from "~/generated/graphql";
 
-export const GalleriesPage: NextPage<{ galleries: Gallery[] }> = ({
+export const GalleriesPage: NextPage<{ galleries: PhotoGallery[] }> = ({
   galleries,
 }) => {
   return (
@@ -13,10 +17,10 @@ export const GalleriesPage: NextPage<{ galleries: Gallery[] }> = ({
       <ul>
         {galleries?.length &&
           galleries.map((gallery) => {
-            const { fields } = gallery;
+            const { title = "", slug = "" } = gallery;
             return (
-              <li key={fields.slug}>
-                <Link href={`/galleries/${fields.slug}`}>{fields.title}</Link>
+              <li key={slug}>
+                <Link href={`/galleries/${slug}`}>{title}</Link>
               </li>
             );
           })}
@@ -26,13 +30,21 @@ export const GalleriesPage: NextPage<{ galleries: Gallery[] }> = ({
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-  const galleries = await contentfulClient.getEntries<ContentEntries<Gallery>>(
-    "photoGallery"
-  );
+  const apolloClient = initializeApollo();
+
+  const allGalleries = await apolloClient.query<
+    GetAllPhotoGalleriesQuery,
+    GetAllPhotoGalleriesQueryVariables
+  >({
+    query: GetAllPhotoGalleriesDocument,
+    variables: {
+      limit: 0,
+    },
+  });
 
   return {
     props: {
-      galleries: galleries.items || [],
+      galleries: allGalleries.data?.photoGalleryCollection?.items,
     },
     // set to 3 minutes, we don't have to revalidate this page as often
     revalidate: 180,

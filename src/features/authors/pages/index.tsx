@@ -1,18 +1,21 @@
+import { ApolloQueryResult, QueryResult, useQuery } from "@apollo/client";
 import { GetStaticProps, NextPage } from "next";
-
-import { contentfulClient } from "~/features/core/api/contentful";
-import { ContentEntries } from "~/features/core/types";
-import { Author } from "../types";
+import { initializeApollo } from "~/features/core/api/graphql";
+import {
+  Author,
+  GetAllAuthorsDocument,
+  GetAllAuthorsQuery,
+} from "~/generated/graphql";
 
 export const AuthorsPage: NextPage<{
-  authors: Author[];
+  authors?: Author[];
 }> = ({ authors }) => {
   return (
     <>
       <h1>Authors</h1>
       <ul>
-        {authors.map((author) => {
-          const { twitterHandle } = author.fields;
+        {authors?.map((author) => {
+          const { twitterHandle = "" } = author;
           return <li key={twitterHandle}>{twitterHandle}</li>;
         })}
       </ul>
@@ -21,13 +24,13 @@ export const AuthorsPage: NextPage<{
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-  const allAuthors = await contentfulClient.getEntries<ContentEntries<Author>>(
-    "author"
-  );
+  const apolloClient = initializeApollo();
+
+  const allAuthors = await apolloClient.query<GetAllAuthorsQuery>({
+    query: GetAllAuthorsDocument,
+  });
 
   return {
-    props: {
-      authors: allAuthors.items,
-    },
+    props: { authors: allAuthors.data?.authorCollection?.items },
   };
 };
